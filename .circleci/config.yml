@@ -62,17 +62,37 @@ jobs:
           paths: [backend/node_modules]
           key: backend-deps-{{ checksum "backend/package-lock.json" }}
 
+  test-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - frontend-deps-{{ checksum "frontend/package-lock.json" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            cd frontend
+            npm install
+      - run:
+          name: Test frontend
+          command: |
+            cd frontend
+            npm run test
+
+  
+
+
   
 
 workflows:
   infra-workflow:
     jobs:
       - build-frontend
-      - build-backend:
-          requires:
-            - build-frontend
-      # - test-frontend:
-      #     requires: [build-frontend]
+      - build-backend    
+      - test-frontend:
+          requires: [build-frontend]
       # - test-backend:
       #     requires: [build-backend]
       # - scan-backend:
