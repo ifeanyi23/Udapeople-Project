@@ -76,9 +76,27 @@ jobs:
             cd frontend
             npm install
       - run:
-          name: Test frontend
+          name: Unit Test on frontend
           command: |
             cd frontend
+            npm run test
+  test-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - frontend-deps-{{ checksum "backend/package-lock.json" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Unit Test on backend
+          command: |
+            cd backend
             npm run test
 
   
@@ -93,8 +111,8 @@ workflows:
       - build-backend    
       - test-frontend:
           requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
+      - test-backend:
+          requires: [build-backend]
       # - scan-backend:
       #     requires: [build-backend]
       # - scan-frontend:
