@@ -22,12 +22,6 @@ commands:
             event: fail
             channel: devops-project
             template: basic_fail_1
-  notify_on_success:
-        steps:
-        - slack/notify:
-            event: pass
-            channel: devops-project
-            template: success_tagged_deployment_1
 
   
             
@@ -152,13 +146,19 @@ jobs:
           name: Scan backend packages
           command: |
             cd backend
-            npm audit fix --audit-level=critical --force
+            # npm audit fix --audit-level=critical --force
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
       -  notify_on_failure
-      -  notify_on_success
 
-  
+  notify_on_success:
+    docker:
+    - image: cimg/base:stable
+    steps:
+    - slack/notify:
+        event: pass
+        channel: devops-project
+        template: success_tagged_deployment_1
     
 
   
@@ -179,7 +179,8 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-
+      - notify_on_success:
+          requires: [scan-frontend]
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
