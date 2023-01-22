@@ -1,4 +1,13 @@
 version: 2.1
+orbs: 
+    slack: circleci/slack@4.10.1
+commands:
+    notify_on_failure:
+        steps:
+        - slack/notify:
+            event: fail
+            channel: devops-project
+            template: basic_fail_1
 
 commands:
   destroy-environment:
@@ -35,6 +44,7 @@ jobs:
             # Your code here
             cd frontend
             npm run build
+          
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-deps-{{ checksum "frontend/package-lock.json" }}
@@ -61,6 +71,8 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-deps-{{ checksum "backend/package-lock.json" }}
+      -  notify_on_failure
+      
 
   test-frontend:
     docker:
@@ -134,8 +146,18 @@ jobs:
           command: |
             cd backend
             npm audit fix --audit-level=critical --force
-            npm audit fix --audit-level=critical --force
+            # npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
+
+  notify_on_success:
+    docker:
+    - image: cimg/base:stable
+    steps:
+    - slack/notify:
+        event: pass
+        channel: devops-project
+        template: success_tagged_deployment_1
+    
 
   
 
@@ -155,6 +177,8 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
+      - notify_on_success:
+          requires: [build-backend]
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
