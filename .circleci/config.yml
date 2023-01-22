@@ -1,13 +1,8 @@
 version: 2.1
 orbs: 
     slack: circleci/slack@4.10.1
-commands:
-    notify_on_failure:
-        steps:
-        - slack/notify:
-            event: fail
-            channel: devops-project
-            template: basic_fail_1
+
+    
 
 commands:
   destroy-environment:
@@ -21,6 +16,12 @@ commands:
           command: |
             # Your code here
             exit 1
+  notify_on_failure:
+        steps:
+        - slack/notify:
+            event: fail
+            channel: devops-project
+            template: basic_fail_1
 
   
             
