@@ -158,7 +158,7 @@ jobs:
     - slack/notify:
         event: pass
         channel: devops-project
-        template: success_tagged_deployment_1
+        template: basic_success_1
     
 
   
