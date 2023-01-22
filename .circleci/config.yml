@@ -87,7 +87,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - frontend-deps-{{ checksum "backend/package-lock.json" }}
+            - backend-deps-{{ checksum "backend/package-lock.json" }}
       - run:
           name: Install Dependencies
           command: |
@@ -98,6 +98,24 @@ jobs:
           command: |
             cd backend
             npm run test
+  scan-frontend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore-cache:
+          keys:
+            - frontend-deps-{{ checksum "backend/package-lock.json" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            cd frontend
+            npm install
+      - run:
+          name: Scan frontend packages
+          command: |
+            cd frontend
+            npm audit --audit-level=critical
 
   
 
