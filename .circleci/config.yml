@@ -103,7 +103,7 @@ jobs:
       - image: cimg/node:13.8.0
     steps:
       - checkout
-      - restore-cache:
+      - restore_cache:
           keys:
             - frontend-deps-{{ checksum "frontend/package-lock.json" }}
       - run:
