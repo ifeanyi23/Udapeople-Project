@@ -341,6 +341,7 @@ jobs:
     docker:
       - image: cimg/python:3.10
     steps:
+      - checkout
       - install_ansible
       - install_awscli
       - install_nodejs
