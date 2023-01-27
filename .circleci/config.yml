@@ -188,7 +188,8 @@ jobs:
           name: Scan frontend packages
           command: |
             cd frontend
-            npm audit fix --audit-level=critical
+            npm audit --audit-level=critical
+            # npm audit fix --audit-level=critical
   scan-backend:
     docker:
       - image: cimg/node:13.8.0
@@ -206,8 +207,8 @@ jobs:
           name: Scan backend packages
           command: |
             cd backend
-            npm audit fix --audit-level=critical --force
-            npm audit fix --audit-level=critical --force
+            # npm audit fix --audit-level=critical --force
+            # npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
       -  notify_on_failure
 
